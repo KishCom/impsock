@@ -46,27 +46,27 @@ ig.module(
                  "sessionId": localUser.sessionId, "name": localUser.name}
              }
              */
-           /* if (message.action == "spawn") {
-                this.game.spawnOtherPlayer(message);
-                return;
-            }*/
 
             //Check the clients list to see if this name is known, if it's not, spawn that player in
             var found = false;
             for (var i = 0; this.otherClients.length > i; i++){
                 if (message.entity.name == this.otherClients[i]){
                     found = true;
+                    //If the action message is from a player disconnect, remove them from the array
+                    if (message.action == "remove") {        
+                        this.otherClients.remove(i);        
+                        this.game.disconnectHandler(message);
+                        return;
+                    }
                 }
             }
+
             if (!found){
-                console.log("Adding new client named:"+message.entity.name);
+                console.log("Adding new client named:" + message.entity.name);
                 this.otherClients.push(message.entity.name);
                 this.game.spawnOtherPlayer(message);
-            }
-
-            if (message.action == "remove") {
-                this.game.disconnectHandler(message);
-                return;
+                //Update your position so that the new player sees you
+                this.game.getEntityByName(this.game.localUser).forceUpdate = true;
             }
             
             this.game.updateOtherPlayer(message);
