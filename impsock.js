@@ -40,12 +40,25 @@ ig.module(
 
         processMessage: function(message) {
             /* Sample data inside message looks like this:
-             {"action": "spawn", //standard is 'message'
-              "entity": //Obviously not the whole entitiy, only the 'syncableProperties'
-                 {"pos":{"x": localUser.pos.x ,"y": localUser.pos.y}, 
-                 "sessionId": localUser.sessionId, "name": localUser.name}
+             {
+                action: 'broadcast',
+                entity: {
+                    accel: {x: 0, y:0},
+                    flip: true,
+                    name: "CptDashing333",
+                    pos: {x: 0, y: 0},
+                    sessionid: "dsfd342fjdsf343943$#43fdsf",
+                    vel: {x: 0, y: 0}
+                }
              }
              */
+
+            //Append new chat message to local user chat textarea
+            if (message.action == "chatMessage") {
+                //Will handle chat messages
+                console.log("Implement me");
+                return;
+            }
 
             //Check the clients list to see if this name is known, if it's not, spawn that player in
             var found = false;
