@@ -43,20 +43,33 @@ ig.module(
              {
                 action: 'broadcast',
                 entity: {
-                    accel: {x: 0, y:0},
-                    flip: true,
-                    name: "CptDashing333",
-                    pos: {x: 0, y: 0},
-                    sessionid: "dsfd342fjdsf343943$#43fdsf",
-                    vel: {x: 0, y: 0}
+                    accel: {x: 0, y:0}, //player acceleration - movement calculated locally
+                    vel: {x: 0, y: 0}, //player velocity - movement calculated locally
+                    flip: true, //direction player is facing
+                    name: "CptDashing333", //internal identifier
+                    displayName: "BillyTheKid", //name that is displayed, originally set to .name 
+                    pos: {x: 0, y: 0}, //absolute in-game position, used to correct .accel and .vel
+                    sessionid: "dsfd342fjdsf343943$#43fdsf" //server assigned sessionid - eventually will resume lost connections
                 }
              }
              */
 
             //Append new chat message to local user chat textarea
             if (message.action == "chatMessage") {
-                //Will handle chat messages
-                console.log("Implement me");
+                //Simply append to textarea
+                var FromName = message.entity.name;
+                if (message.entity.displayName){
+                    FromName = message.entity.displayName
+                }
+                //Wildly insecure I know, this is only a demo though, not meant for production use
+                if (FromName == "SYS"){
+                    $("#ChatWindow").append( "<strong class='from-name system-message'>" + message.chatMessage.replace(/(<([^>]+)>)/ig,"") + "</strong>" + '<br />');
+                }else{
+                    FromName = "<strong class='from-name'>" + escape(FromName) + "</strong>: "
+                    $("#ChatWindow").append(FromName + message.chatMessage.replace(/(<([^>]+)>)/ig,"") + '<br />');
+                }
+                //Scroll the window down nicely if we fill it up
+                $("#ChatWindow").animate({ scrollTop: $("#ChatWindow").prop("scrollHeight") - $("#ChatWindow").height() }, 500);
                 return;
             }
 
@@ -74,8 +87,8 @@ ig.module(
                 }
             }
 
-            if (!found){
-                console.log("Adding new client named:" + message.entity.name);
+            if (!found && message.entity.pos != undefined){
+                //console.log("Adding new client named:" + message.entity.name);
                 this.otherClients.push(message.entity.name);
                 this.game.spawnOtherPlayer(message);
                 //Update your position so that the new player sees you
